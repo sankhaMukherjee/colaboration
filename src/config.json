@@ -1,3 +1,32 @@
 {
-    
+    "TODO" : {
+        "train"    : false, 
+        "test"     : false,
+        "someTest" : true
+    }, 
+
+    "UnityEnv" : {
+        "file_name"   : "../p3_collab-compet/Tennis.app",
+        "no_graphics" : true
+    }, 
+
+    "env" : {
+        "trainMode" : true
+    }, 
+
+    "test" : {
+        "showEnv"     : false, 
+        "trainMode"   : true, 
+        "policy"      : null, 
+        "numEpisodes" : 100, 
+        "averaging"   : 2,
+        "verbose"     : false
+    },
+
+    "memory-Episode": {
+        "maxLen"    : 10, 
+        "nSamples"  : 3, 
+        "nSteps"    : 1, 
+        "gamma"     : 1
+    }
 }
