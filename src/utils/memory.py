@@ -1,47 +1,49 @@
 from collections import deque, namedtuple
 import numpy as np 
 
-class Episode:
+class ReplayBuffer:
 
-    def __init__(self, maxLen, nSamples, nSteps=1, gamma=1):
-
-        self.maxLen   = maxLen
-        self.nSamples = nSamples
-        self.nSteps   = nSteps
-        self.gamma    = gamma 
-        # We want to save the cumulative reward so that we are able
-        # to do some form of value-based implementation if necessary
-        self.Experience = namedtuple("Experience", 
-            field_names = [ "state", "action", "reward", "next_state", 
-                            "done", "cumReward"])
-        self.memory = deque(maxlen=maxLen)
-
-        return
-        
-    def append(self, state, action, reward, next_state, done):
-        # Notice that every time an experience is added, we
-        # need to update the value of cumulative rewards. So
-        # We shall save them as an array at the end ...
-
-        for m in self.memory:
-            m.cumReward.append((reward, next_state))
-
-        e = self.Experience(state, action, reward, next_state, done, [])
-        self.memory.append(e)
-
+    def __init__(self, maxEpisodes):
+        self.maxEpisodes  = maxEpisodes
+        self.memory       = deque(maxlen=maxEpisodes)
         return
 
-    def sample(self, nSamples=None, nSteps=None):
+    def append(self, result):
+        self.memory.append(result)
+        return
 
+    def appendMany(self, results):
+        for r in results:
+            self.memory.append(r)
+        return
 
-        if nSamples is None:
-            nSamples = self.nSamples
+    def delNVals(self, N, epsilon=1e-4):
 
-        if nSteps is None:
-            nSteps = self.nSteps
+        if N >= len(self.memory):
+            return
 
-        retVals = np.random.choice( range(len(self.memory)), nSamples )
-        results = []
+        state, action, reward, next_state, done = zip(*self.memory)
+
+        reward = np.abs(reward) + epsilon # learn both bad and good
+        reward = 1/reward
+        prob   = reward / reward.sum()
+        choice = np.random.choice( np.arange( len(self.memory) ), N, replace = False, p = prob )
+
+        choice = sorted(list(choice), reverse=True)
+        for c in choice:
+            del self.memory[c]
+
+        return
+
+    def sample(self, nSamples, epsilon=1e-4):
+
+        state, action, reward, next_state, done = zip(*self.memory)
+
+        reward = np.abs(reward) + epsilon # learn both bad and good 
+        prob   = reward / reward.sum()
+        choice = np.random.choice( np.arange( len(self.memory) ), nSamples, p = prob )
+
+        results = [ self.memory[c] for c in choice]
         
-
         return results
+

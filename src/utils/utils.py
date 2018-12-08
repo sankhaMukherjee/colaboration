@@ -123,7 +123,6 @@ class Env:
 
         self.reset()
         stepCount     = 0
-        furuewRewards = []
         allResults    = [[] for _ in range(self.num_agents)]
 
         while True:
@@ -137,7 +136,6 @@ class Env:
                 allResults[agent].append(results[agent])
                 finished = finished or done
 
-        
             if finished or (stepCount >= maxSteps):
                 break
 
@@ -147,5 +145,3 @@ class Env:
     def __exit__(self, *args):
         self.env.close()
         return
-
-

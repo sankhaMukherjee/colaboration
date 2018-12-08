@@ -4,6 +4,7 @@ import numpy as np
 from unityagents import UnityEnvironment
 
 from utils import utils as utils
+from tqdm import tqdm
 
 def main():
 
@@ -11,7 +12,6 @@ def main():
 
     if config['TODO']['train']:
         print('abcd')
-
 
     if config['TODO']['test']:
         # You should insert the policy network here ...
@@ -25,8 +25,28 @@ def main():
         from utils import memory
         from utils import utils
         print('Doing some random tests here')
-        # epMemory = memory.Episode(maxLen=10, nSamples=2, nSteps=1, gamma=1)
 
+        if True:
+
+            print('Lets fill up the replay buffer ...')
+            memories = [memory.ReplayBuffer(200) for _ in range(2)]
+
+            with utils.Env(showEnv=False, trainMode=True) as env:
+                for i in tqdm(range(500)):
+                    env.reset()
+                    allResults = env.episode( utils.randomPolicy, 100 )
+                    for i, result in enumerate(allResults):
+                        memories[i].delNVals( 2 )
+                        memories[i].appendMany(result)
+
+
+            state, action, reward, next_state, done = memories[0].memory[1]
+            print(reward)
+
+            # Results of sampling form the memory
+            results = memories[0].sample(10, 1e-2)
+            print(list(zip(*results))[2])
+        
         if False:
             print('Lets take one step ...')
             with utils.Env(showEnv=True, trainMode=False) as env:
@@ -44,20 +64,7 @@ def main():
 
                 # Results are for a set of independent users ...
                 result1, result2 = allResults
-                states, actions, rewards, next_states, dones = zip(*result1)
-                print(dones)
-                print(rewards)
-
-
-        #     env.reset()
-            
-        #     allResults = env.episode( utils.randomPolicy, maxSteps=20 )
-        #     states, actions, rewards, next_states, dones = zip(*allResults)
-        #     print(dones)
-        #     for a in actions:
-        #         print(a)
-
-
+                states, actions, rewards, next_states, dones, cumReward = zip(*result1)
 
     return
 
