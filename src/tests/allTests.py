@@ -73,8 +73,8 @@ def testActorCritic():
 
     memories = [memory.ReplayBuffer(200) for _ in range(2)]
 
-    actor = NN.Actor(**config['Actor'])
-    critic = NN.Critic(**config['Critic'])
+    actor  = NN.Actor( **config['Agent']['Actor'])
+    critic = NN.Critic(**config['Agent']['Critic'])
 
     with utils.Env(showEnv=False, trainMode=True) as env:
         
@@ -104,6 +104,49 @@ def testActorCritic():
 
     return
 
+def testAgent():
+
+    print('Testing the Agent ...')
+    print('------------------------------------')
+    import torch
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    agents = [NN.Agent() for _ in range(2)]
+
+    def policy(states):
+
+        states  = torch.from_numpy(states).float().to(device)
+        actions = []
+        for i, s in enumerate(states):
+            actions.append( agents[i].actorSlow( s ).cpu().data.numpy().reshape(-1, 2) )
+
+        del states
+
+        actions = np.vstack( actions )
+        return actions
+    
+    with utils.Env(showEnv=False, trainMode=True) as env:
+        
+        print('Generating memories ....')
+        print('------------------------')
+        for _ in tqdm(range(200)):
+            env.reset()
+            allResults = env.episode( policy, 200 )
+
+            scores = []
+            for i, result in enumerate(allResults):
+                agents[i].updateBuffer(result, nReduce=0)
+                agents[i].step( 50 )
+
+                rewards = list(zip(*result))[2]
+                scores.append( sum(rewards) )
+            
+            tqdm.write( str(np.mean(scores)) )
+
+
+
+    return
+
 def allTests():
     
     print('Doing some random tests here')
@@ -120,6 +163,9 @@ def allTests():
 
     if config['TODO']['someTest']['testActorCritic']:
         testActorCritic()
+
+    if config['TODO']['someTest']['testAgent']:
+        testAgent()
 
 
 

@@ -12,59 +12,6 @@ def randomPolicy(states):
 
     return actions
 
-def playEpisodes(showEnv=False, trainMode=True, policy=None, numEpisodes=5, averaging=2, verbose=False):
-
-    allScores      = []
-    averagedScores = []
-    runningAverage = deque([], maxlen=averaging)
-
-    if policy is None:
-        policy = randomPolicy
-
-    config = json.load(open('config.json'))
-    env    = UnityEnvironment(
-        file_name = config['UnityEnv']['file_name'], 
-        no_graphics = not showEnv)
-
-    # get the default brain
-    brain_name = env.brain_names[0]
-    brain      = env.brains[brain_name]
-    env_info   = env.reset(train_mode=trainMode)[brain_name]
-
-    num_agents  = len(env_info.agents)
-    action_size = brain.vector_action_space_size
-
-    for i in tqdm(range(numEpisodes)):                             # play game for 5 episodes
-        env_info = env.reset(train_mode=trainMode)[brain_name]     # reset the environment    
-        states  = env_info.vector_observations                  # get the current state (for each agent)
-
-        scores = np.zeros(num_agents)                          # initialize the score (for each agent)
-        while True:
-            actions     = policy(states)
-            env_info    = env.step(actions)[brain_name]           # send all actions to tne environment
-            next_states = env_info.vector_observations            # get next state (for each agent)
-            rewards     = env_info.rewards                        # get reward (for each agent)
-            dones       = env_info.local_done                     # see if episode finished
-            scores     += env_info.rewards                        # update the score (for each agent)
-            states      = next_states                             # roll over states to next time step
-
-            if np.any(dones):                                  # exit loop if episode finished
-                break
-
-        allScores.append(scores)
-        runningAverage.append(scores)
-        averagedScores.append( np.mean( runningAverage ) )
-        allScores.append(scores)
-
-        if verbose:
-            print('Total score (averaged over agents) this episode: {} -> {} '.format( 
-                np.mean(scores), np.mean(runningAverage) ))
-
-    env.close()
-
-
-    return allScores, averagedScores
-
 class Env:
 
     def __init__(self, showEnv=False, trainMode=True):

@@ -68,4 +68,92 @@ class Agent:
 
     def __init__(self):
 
+        self.config = json.load(open('config.json'))['Agent']
+
+        self.actorFast = Actor(**self.config['Actor'])
+        self.actorSlow = Actor(**self.config['Actor'])
+        self.actorOptimizer = optim.Adam( 
+            self.actorFast.parameters(), lr=self.config['actorLR'] )
+        
+        self.criticFast = Critic(**self.config['Critic'])
+        self.criticSlow = Critic(**self.config['Critic'])
+        self.criticOptimizer = optim.Adam( 
+            self.criticFast.parameters(), lr=self.config['criticLR'] )
+
+        # Create some buffer for learning
+        self.buffer = memory.ReplayBuffer(self.config['ReplayBuffer']['maxEpisodes'])
+
+        return
+
+    def step(self, nSamples, Tau=None):
+        '''Take one step toward learning
+        
+        This takes a set of samples provided by the parameter 
+        ``nSamples`` and learns the fast actor and critics. This
+        will also update actorSlow and criticSlow at the end of
+        the nSamples. Hence, nSamples is a good indication of how
+        fast the slow-moving actors and critics should be updated
+        in the learning process.
+        
+        Parameters
+        ----------
+        nSamples : {int}
+            Number of samples that will be used for sampling the memory
+            buffer, and the subsequently used for learning the actor and
+            the critic.
+        Tau : {float or None}, optional
+            This is the parameter that will be used for the soft update of
+            the slow-moivng components. (the default is None, wehrein, the 
+            value from the config file will be used for the update)
+        '''
+
+        result = zip(*self.buffer.sample( nSamples ))
+        states, actions, rewards, next_states, dones = map(np.array, result)
+        
+        states       = torch.from_numpy(states).float().to(device)
+        actions      = torch.from_numpy(actions).float().to(device)
+        rewards      = torch.from_numpy(rewards).float().to(device)
+        next_states  = torch.from_numpy(next_states).float().to(device)
+
+        # ------------ Update the critics --------------------------
+        nextActionHat  = self.actorSlow( next_states )
+        qValHat        = rewards + self.criticSlow( next_states, nextActionHat ) # * gamma (=1)
+        qVal           = self.criticFast( states, actions )
+
+        lossFnCritic = F.mse_loss(qValHat, qVal)
+        self.criticOptimizer.zero_grad()
+        lossFnCritic.backward()
+        self.criticOptimizer.step()
+
+        # ------------ Update the actors --------------------------
+        actionHat   = self.actorFast( states )
+        lossFnActor = - self.criticSlow( states, actionHat ).mean()
+
+        self.actorOptimizer.zero_grad()
+        lossFnActor.backward()
+        self.actorOptimizer.step()
+
+        del states, actions, rewards, next_states
+        del nextActionHat, qValHat, qVal
+        del actionHat
+        del lossFnCritic, lossFnActor
+
+        # ------------ Soft update the slow components -------------
+        self.softUpdate()
+
+        return
+
+    def softUpdate(self, tau=None):
+
+        if tau is None:
+            tau = self.config['Tau']
+
+        for v1, v2 in zip(self.actorFast.parameters(), self.actorSlow.parameters()):
+            v2.data.copy_( tau*v1 + (1-tau)*v2 )
+
+        for v1, v2 in zip(self.criticFast.parameters(), self.criticSlow.parameters()):
+            v2.data.copy_( tau*v1 + (1-tau)*v2 )
+
+    def updateBuffer(self, data, nReduce=0):
+        self.buffer.appendMany( data )
         return

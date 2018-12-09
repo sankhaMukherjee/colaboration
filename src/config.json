@@ -7,7 +7,8 @@
             "fillReplayBuffer" : false,
             "oneStep"          : false,
             "oneGame"          : false,
-            "testActorCritic"  : false
+            "testActorCritic"  : false,
+            "testAgent"        : true
         }
 
     }, 
@@ -17,24 +18,32 @@
         "no_graphics" : true
     }, 
 
-    "env" : {
-        "trainMode" : true
-    }, 
 
-    "Actor" : {
-        "state_size"  : 24,
-        "action_size" : 2,
-        "seed"        : 1234,
-        "fc1_units"   : 48,
-        "fc2_units"   : 25
-    },
+    "Agent" : {
+        "actorLR"  : 1e-2,
+        "criticLR" : 1e-2,
+        "Tau"      : 0.1,
 
-    "Critic" : {
-        "state_size"  : 24,
-        "action_size" : 2,
-        "seed"        : 1234,
-        "fcs1_units"  : 48,
-        "fc2_units"   : 25
+        "Actor" : {
+            "state_size"  : 24,
+            "action_size" : 2,
+            "seed"        : 1234,
+            "fc1_units"   : 48,
+            "fc2_units"   : 25
+        },
+
+        "Critic" : {
+            "state_size"  : 24,
+            "action_size" : 2,
+            "seed"        : 1234,
+            "fcs1_units"  : 48,
+            "fc2_units"   : 25
+        },
+
+        "ReplayBuffer" : {
+            "maxEpisodes" : 100
+        }
+
     },
 
     "test" : {
@@ -44,13 +53,8 @@
         "numEpisodes" : 100, 
         "averaging"   : 2,
         "verbose"     : false
-    },
-
-    "memory-Episode": {
-        "maxLen"    : 10, 
-        "nSamples"  : 3, 
-        "nSteps"    : 1, 
-        "gamma"     : 1
     }
+
+
 }
 
