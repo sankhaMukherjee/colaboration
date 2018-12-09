@@ -1,7 +1,7 @@
 {
     "TODO" : {
-        "train"    : true, 
-        "test"     : false,
+        "train"    : false, 
+        "test"     : true,
         "someTest" : {
             "TODO"             : false,
             "fillReplayBuffer" : false,
@@ -16,19 +16,29 @@
     "UnityEnv" : {
         "file_name"   : "../p3_collab-compet/Tennis.app",
         "no_graphics" : true
-    }, 
+    },
 
     "training" : {
         "printEvery"      : 50,
-        "totalIterations" : 5000,
+        "totalIterations" : 2000,
         "memorySize"      : 5000,
         "sampleSize"      : 200,
-        "nReduce"         : 20
+        "nReduce"         : 0
+    },
+
+    "testing" : {
+        "folders" : [
+            "../results/2018-12-09--17-54-53",
+            "../results/2018-12-09--18-16-56",
+            "../results/2018-12-09--18-27-51",
+            "../results/2018-12-09--18-31-01"
+        ],
+        "nTimes" : 20
     },
 
     "Agent" : {
-        "actorLR"  : 1e-1,
-        "criticLR" : 1e-1,
+        "actorLR"  : 1e-3,
+        "criticLR" : 1e-3,
         "Tau"      : 0.1,
 
         "Actor" : {

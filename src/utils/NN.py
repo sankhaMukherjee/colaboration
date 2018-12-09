@@ -1,5 +1,5 @@
 import numpy as np
-import json
+import json, os
 
 import torch
 import torch.nn as nn
@@ -157,3 +157,22 @@ class Agent:
     def updateBuffer(self, data, nReduce=0):
         self.buffer.appendMany( data )
         return
+
+    def save(self, folder, name):
+
+        torch.save( self.actorFast.state_dict(),  os.path.join( folder, f'{name}.actorFast')  )
+        torch.save( self.actorSlow.state_dict(),  os.path.join( folder, f'{name}.actorSlow')  )
+        torch.save( self.criticFast.state_dict(), os.path.join( folder, f'{name}.criticFast')  )
+        torch.save( self.criticSlow.state_dict(), os.path.join( folder, f'{name}.criticSlow')  )
+
+        return
+
+    def load(self, folder, name):
+
+        self.actorFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorFast')  ))
+        self.actorSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorSlow')  ))
+        self.criticFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticFast')  ))
+        self.criticSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticSlow')  ))
+
+        return
+

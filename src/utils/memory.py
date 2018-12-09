@@ -41,7 +41,8 @@ class ReplayBuffer:
 
         reward = np.abs(reward) + epsilon # learn both bad and good 
         prob   = reward / reward.sum()
-        choice = np.random.choice( np.arange( len(self.memory) ), nSamples, p = prob )
+        # choice = np.random.choice( np.arange( len(self.memory) ), nSamples, p = prob )
+        choice = np.random.choice( np.arange( len(self.memory) ), nSamples )
 
         results = [ self.memory[c] for c in choice]
         

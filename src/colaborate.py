@@ -12,7 +12,8 @@ def main():
         trainer.train()
 
     if config['TODO']['test']:
-        print('This part is for testing ...')
+        from utils import tester
+        tester.testing( **config['testing'] )
 
     if config['TODO']['someTest']['TODO']:
         from tests import allTests

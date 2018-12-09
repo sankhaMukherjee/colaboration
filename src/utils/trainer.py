@@ -42,13 +42,12 @@ def saveResults(allScores):
     with open( os.path.join(folder, 'config.json'), 'w' ) as fOut:
         fOut.write( json.dumps(config) )
 
-    return
-
+    return folder
 
 def train():
 
-    nAgents = 2
-    agents  = [NN.Agent() for _ in range(nAgents)]
+    nAgents    = 2
+    agents     = [NN.Agent() for _ in range(nAgents)]
     allScores  = deque([], maxlen=100)
     allScores1 = [] # This saves the actual values
 
@@ -98,7 +97,9 @@ def train():
             if m%printEvery == 0:
                 tqdm.write('mean = {:9.5f}, max = {:9.5f}'.format(np.mean(allScores), np.std(allScores)))
 
-        saveResults( allScores1 )
+        folder = saveResults( allScores1 )
+        for i, agent in enumerate(agents):
+            agent.save( folder, f'Agent_{i}' )
                 
 
     return
