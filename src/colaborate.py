@@ -3,14 +3,13 @@ import numpy as np
 
 from unityagents import UnityEnvironment
 
-
-
 def main():
 
     config = json.load(open('config.json'))
 
     if config['TODO']['train']:
-        print('This part is for training ...')
+        from utils import trainer
+        trainer.train()
 
     if config['TODO']['test']:
         print('This part is for testing ...')

@@ -1,9 +1,9 @@
 {
     "TODO" : {
-        "train"    : false, 
+        "train"    : true, 
         "test"     : false,
         "someTest" : {
-            "TODO"             : true,
+            "TODO"             : false,
             "fillReplayBuffer" : false,
             "oneStep"          : false,
             "oneGame"          : false,
@@ -18,10 +18,17 @@
         "no_graphics" : true
     }, 
 
+    "training" : {
+        "printEvery"      : 50,
+        "totalIterations" : 5000,
+        "memorySize"      : 5000,
+        "sampleSize"      : 200,
+        "nReduce"         : 20
+    },
 
     "Agent" : {
-        "actorLR"  : 1e-2,
-        "criticLR" : 1e-2,
+        "actorLR"  : 1e-1,
+        "criticLR" : 1e-1,
         "Tau"      : 0.1,
 
         "Actor" : {
@@ -41,7 +48,7 @@
         },
 
         "ReplayBuffer" : {
-            "maxEpisodes" : 100
+            "maxEpisodes" : 5000
         }
 
     },

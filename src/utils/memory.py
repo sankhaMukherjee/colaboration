@@ -19,7 +19,7 @@ class ReplayBuffer:
 
     def delNVals(self, N, epsilon=1e-4):
 
-        if N >= len(self.memory):
+        if N*3 >= len(self.memory):
             return
 
         state, action, reward, next_state, done = zip(*self.memory)
