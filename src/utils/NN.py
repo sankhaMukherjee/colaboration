@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 
-from lib import utils, memory
+from utils import utils, memory
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -60,7 +60,12 @@ class Critic(nn.Module):
     def forward(self, state, action):
         """Build a critic (value) network that maps (state, action) pairs -> Q-values."""
         xs = F.relu(self.fcs1(state))
-        x = torch.cat((xs, action)) # axis = 1
+        x = torch.cat((xs, action), dim=1) # axis = 1
         x = F.relu(self.fc2(x))
         return self.fc3(x)
 
+class Agent:
+
+    def __init__(self):
+
+        return

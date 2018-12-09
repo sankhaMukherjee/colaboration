@@ -2,7 +2,14 @@
     "TODO" : {
         "train"    : false, 
         "test"     : false,
-        "someTest" : true
+        "someTest" : {
+            "TODO"             : true,
+            "fillReplayBuffer" : false,
+            "oneStep"          : false,
+            "oneGame"          : false,
+            "testActorCritic"  : false
+        }
+
     }, 
 
     "UnityEnv" : {
@@ -13,6 +20,22 @@
     "env" : {
         "trainMode" : true
     }, 
+
+    "Actor" : {
+        "state_size"  : 24,
+        "action_size" : 2,
+        "seed"        : 1234,
+        "fc1_units"   : 48,
+        "fc2_units"   : 25
+    },
+
+    "Critic" : {
+        "state_size"  : 24,
+        "action_size" : 2,
+        "seed"        : 1234,
+        "fcs1_units"  : 48,
+        "fc2_units"   : 25
+    },
 
     "test" : {
         "showEnv"     : false, 
@@ -30,3 +53,4 @@
         "gamma"     : 1
     }
 }
+
