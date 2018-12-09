@@ -23,7 +23,7 @@ def testing( folders, nTimes=5 ):
         states  = torch.from_numpy(states).float().to(device)
         actions = []
         for i, s in enumerate(states):
-            actions.append( agents[i].actorSlow( s ).cpu().data.numpy().reshape(-1, 2) )
+            actions.append( agents[i].actorFast( s ).cpu().data.numpy().reshape(-1, 2) )
         del states
 
         actions = np.vstack( actions )

@@ -56,30 +56,42 @@ def train():
     memorySize      = config['training']['memorySize']
     sampleSize      = config['training']['sampleSize']
     nReduce         = config['training']['nReduce']
+    exploreFactor   = config['training']['initExplore']
 
-    def policy(states):
-        # --------------------------------------------------------
-        # The policy just takes a set of two states, and splits
-        # them into two actions. Then, uses the actions as used
-        # by the individual policies and returns them ...
-        # --------------------------------------------------------
+    def explorePolicy(explore = 0):
+        '''
+            This taked an exploration variable and returns a policy
+            that can be used. 
+        '''
+        def policy(states):
+            
+            states  = torch.from_numpy(states).float().to(device)
+            actions = []
+            for i, s in enumerate(states):
+                actions.append( agents[i].actorSlow( s ).cpu().data.numpy().reshape(-1, 2) )
 
-        states  = torch.from_numpy(states).float().to(device)
-        actions = []
-        for i, s in enumerate(states):
-            actions.append( agents[i].actorSlow( s ).cpu().data.numpy().reshape(-1, 2) )
-        del states
+            actions       = np.vstack( actions )
+            randomActions = utils.randomPolicy( states )
+            actions       = (1-explore) * actions + explore * randomActions
+            del states
+            return actions
 
-        actions = np.vstack( actions )
-        return actions
+        return policy
     
     with utils.Env(showEnv=False, trainMode=True) as env:
         
         print('Generating memories ....')
         print('------------------------')
         for m in tqdm(range(totalIterations)):
+
             env.reset()
-            allResults = env.episode( policy, memorySize )
+
+            # Update buffer should always contain some element
+            # of exploration
+            allResults = env.episode( explorePolicy( exploreFactor ), memorySize )
+
+            if m % config['training']['exploreDecEvery'] == 0:
+                exploreFactor *= config['training']['exploreDec']
 
             scores = []
             for i, result in enumerate(allResults):

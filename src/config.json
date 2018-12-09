@@ -1,7 +1,7 @@
 {
     "TODO" : {
-        "train"    : false, 
-        "test"     : true,
+        "train"    : true, 
+        "test"     : false,
         "someTest" : {
             "TODO"             : false,
             "fillReplayBuffer" : false,
@@ -19,27 +19,28 @@
     },
 
     "training" : {
-        "printEvery"      : 50,
-        "totalIterations" : 2000,
+        "initExplore"     : 1,
+        "exploreDec"      : 0.999999,
+        "exploreDecEvery" : 100,
+        "printEvery"      : 100,
+        "totalIterations" : 5000,
         "memorySize"      : 5000,
         "sampleSize"      : 200,
-        "nReduce"         : 0
+        "nReduce"         : 50
     },
 
     "testing" : {
         "folders" : [
-            "../results/2018-12-09--17-54-53",
-            "../results/2018-12-09--18-16-56",
-            "../results/2018-12-09--18-27-51",
-            "../results/2018-12-09--18-31-01"
+            "../results/2018-12-09--21-11-36",
+            "../results/2018-12-09--21-21-21"
         ],
-        "nTimes" : 20
+        "nTimes" : 3
     },
 
     "Agent" : {
-        "actorLR"  : 1e-3,
-        "criticLR" : 1e-3,
-        "Tau"      : 0.1,
+        "actorLR"  : 1e-2,
+        "criticLR" : 1e-2,
+        "Tau"      : 0.001,
 
         "Actor" : {
             "state_size"  : 24,

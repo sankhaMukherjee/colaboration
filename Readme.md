@@ -24,7 +24,7 @@ Install these in a convinient location within your folder structure, and use thi
 3. Change to the folder `src` for all other operations. There is a `Malefile` available within this folder as well. You can use the Makefile as is, or simply run the python files yourself. Availble optins in the `Makefile` are as follows:
 
  - `make run`   : run the program for training
- - `make clean` : delete all temorary files 
+ - `make clean` : delete all temorary files
 
 ## 3. Operation
 
