@@ -11,6 +11,10 @@ def main():
         from utils import trainer
         trainer.train()
 
+    if config['TODO']['trainMemory']:
+        from utils import trainerMemory
+        trainerMemory.train()
+
     if config['TODO']['test']:
         from utils import tester
         tester.testing( **config['testing'] )

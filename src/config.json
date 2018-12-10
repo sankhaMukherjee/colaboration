@@ -1,7 +1,8 @@
 {
     "TODO" : {
-        "train"    : true, 
-        "test"     : false,
+        "train"        : false, 
+        "trainMemory"  : true, 
+        "test"         : false,
         "someTest" : {
             "TODO"             : false,
             "fillReplayBuffer" : false,
@@ -23,7 +24,7 @@
         "exploreDec"      : 0.999999,
         "exploreDecEvery" : 100,
         "printEvery"      : 100,
-        "totalIterations" : 5000,
+        "totalIterations" : 20,
         "memorySize"      : 5000,
         "sampleSize"      : 200,
         "nReduce"         : 50
