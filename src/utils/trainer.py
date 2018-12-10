@@ -12,6 +12,7 @@ from tqdm  import tqdm
 
 config = json.load(open('config.json'))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 
 def saveResults(allScores):
 
@@ -65,11 +66,12 @@ def train():
         '''
         def policy(states):
             
-            states  = torch.from_numpy(states).float().to(device)
             actions = []
             for i, s in enumerate(states):
+                s  = torch.from_numpy(s).float().to(device)
                 actions.append( agents[i].actorSlow( s ).cpu().data.numpy().reshape(-1, 2) )
 
+            states        = torch.from_numpy(states).float().to(device)
             actions       = np.vstack( actions )
             randomActions = utils.randomPolicy( states )
             actions       = (1-explore) * actions + explore * randomActions

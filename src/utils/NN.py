@@ -10,6 +10,7 @@ from torch.autograd import Variable
 from utils import utils, memory
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 
 class Actor(nn.Module):
     """Actor (Policy) Model."""
@@ -79,6 +80,12 @@ class Agent:
         self.criticSlow = Critic(**self.config['Critic'])
         self.criticOptimizer = optim.Adam( 
             self.criticFast.parameters(), lr=self.config['criticLR'] )
+        
+        if torch.cuda.is_available():
+            self.actorFast = self.actorFast.cuda()
+            self.actorSlow = self.actorSlow.cuda()
+            self.criticFast = self.criticFast.cuda()
+            self.criticSlow = self.criticSlow.cuda()
 
         # Create some buffer for learning
         self.buffer = memory.ReplayBuffer(self.config['ReplayBuffer']['maxEpisodes'])

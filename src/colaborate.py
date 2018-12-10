@@ -1,7 +1,4 @@
 import json
-import numpy as np
-
-from unityagents import UnityEnvironment
 
 def main():
 

@@ -6,6 +6,7 @@ from utils import utils, NN
 # from utils import memory, utils, NN
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 
 def testing( folders, nTimes=5 ):
 

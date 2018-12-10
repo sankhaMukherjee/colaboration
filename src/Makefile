@@ -5,4 +5,4 @@ run:
 clean:
 	@echo "cleaning the cache files ..."
 	@find . -name  "__pycache__" | xargs rm -rf
-	@rm -rf ../results
+	#@rm -rf ../results
