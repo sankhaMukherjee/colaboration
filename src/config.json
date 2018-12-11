@@ -1,14 +1,15 @@
 {
     "TODO" : {
-        "train"    : true, 
-        "test"     : false,
+        "train"      : false, 
+        "test"       : false,
         "someTest" : {
-            "TODO"             : false,
+            "TODO"             : true,
             "fillReplayBuffer" : false,
             "oneStep"          : false,
             "oneGame"          : false,
             "testActorCritic"  : false,
-            "testAgent"        : true
+            "testMemory"       : true,
+            "testAgent"        : false
         }
 
     }, 

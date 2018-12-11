@@ -1,5 +1,6 @@
 from collections import deque, namedtuple
-import numpy as np 
+import numpy as np
+import pickle, os
 
 class ReplayBuffer:
 
@@ -47,4 +48,15 @@ class ReplayBuffer:
         results = [ self.memory[c] for c in choice]
         
         return results
+
+    def save(self, folder, name):
+
+        with open(os.path.join(folder, f'memory_{name}.pickle'), 'wb') as fOut:
+            pickle.dump(self.memory, fOut, pickle.HIGHEST_PROTOCOL)
+
+        return
+
+    def load(self, folder, name):
+        self.memory = pickle.load(os.path.join(folder, f'memory_{name}.pickle'))
+        return
 
