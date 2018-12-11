@@ -1,9 +1,9 @@
 {
     "TODO" : {
-        "train"      : false, 
+        "train"      : true, 
         "test"       : false,
         "someTest" : {
-            "TODO"             : true,
+            "TODO"             : false,
             "fillReplayBuffer" : false,
             "oneStep"          : false,
             "oneGame"          : false,
@@ -25,11 +25,11 @@
         "initExplore"     : 1,
         "exploreDec"      : 0.999999,
         "exploreDecEvery" : 100,
-        "printEvery"      : 100,
-        "totalIterations" : 2500,
+        "printEvery"      : 10,
+        "totalIterations" : 100,
         "memorySize"      : 5000,
         "sampleSize"      : 200,
-        "nReduce"         : 50
+        "nReduce"         : 0
     },
 
     "testing" : {

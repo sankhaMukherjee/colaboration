@@ -115,7 +115,7 @@ class Agent:
         '''
 
         result = zip(*self.buffer.sample( nSamples ))
-        states, actions, rewards, next_states, dones = map(np.array, result)
+        states, actions, rewards, next_states, dones, cumRewards = map(np.array, result)
         
         states       = torch.from_numpy(states).float().to(device)
         actions      = torch.from_numpy(actions).float().to(device)

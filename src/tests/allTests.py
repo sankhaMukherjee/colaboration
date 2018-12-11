@@ -109,10 +109,13 @@ def testMemory():
     from utils import generateMemories
     from utils import utils
 
-    m1, m2 = generateMemories.memories(
-        nIterations = 200, 
-        policy      = utils.randomPolicy, 
-        episodeSize = 100)
+    with utils.Env(showEnv=False, trainMode=True) as env:
+
+        m1, m2 = generateMemories.memories(
+            env,
+            nIterations = 200, 
+            policy      = utils.randomPolicy, 
+            episodeSize = 100)
 
     for m in m1:
         print(m)
