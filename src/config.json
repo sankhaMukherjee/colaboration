@@ -27,11 +27,11 @@
         "exploreDec"      : 0.999999,
         "exploreDecEvery" : 100,
         "printEvery"      : 10,
-        "totalIterations" : 1000,
+        "totalIterations" : 10,
         "nSteps"          : 50,
         "memorySize"      : 5000,
         "sampleSize"      : 100,
-        "nReduce"         : 0
+        "hotStart"        : "../results/2018-12-12--22-11-32"
     },
 
     "testing" : {

@@ -57,8 +57,8 @@ def train():
     nSteps          = config['training']['nSteps']
     memorySize      = config['training']['memorySize']
     sampleSize      = config['training']['sampleSize']
-    nReduce         = config['training']['nReduce']
     exploreFactor   = config['training']['initExplore']
+    hotStart        = config['training']['hotStart']
 
     def compPolicy(states):
             
@@ -93,13 +93,21 @@ def train():
     
     with utils.Env(showEnv=False, trainMode=True) as env:
         
-        print('Generating memories ....')
-        print('------------------------')
-        # Update buffer should always contain some element
-        # of exploration
-        allResults = generateMemories.memories( env, 10000, explorePolicy( exploreFactor ), episodeSize = memorySize )
-        for i, result in enumerate(allResults):
-            agents[i].updateBuffer(result, nReduce = nReduce)
+
+
+
+        if hotStart is None:
+            print('Generating memories ....')
+            print('------------------------')
+            
+            allResults = generateMemories.memories( env, 10000, explorePolicy( exploreFactor ), episodeSize = memorySize )
+            for i, result in enumerate(allResults):
+                agents[i].updateBuffer(result)
+        else:
+            print(f'Hot-starting agents from a previous state [{hotStart}]')
+            print('---------------------------------------------------------------------------')
+            for i in range(2):
+                agents[i].load(hotStart, f'Agent_{i}')
 
         for m in tqdm(range(totalIterations)):
 
@@ -113,7 +121,7 @@ def train():
                 exploreFactor *= config['training']['exploreDec']
 
             for i, result in enumerate(allResults):
-                agents[i].updateBuffer(result, nReduce = nReduce)
+                agents[i].updateBuffer(result)
 
                 # Learn from a sample of ``sampleSize`` tuples ``nSteps`` times
                 loss = [agents[i].step( sampleSize ) for _ in range(nSteps) ]

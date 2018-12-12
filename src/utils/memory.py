@@ -73,6 +73,6 @@ class ReplayBuffer:
         return
 
     def load(self, folder, name):
-        self.memory = pickle.load(os.path.join(folder, f'memory_{name}.pickle'))
+        self.memory = pickle.load(open( os.path.join(folder, f'memory_{name}.pickle'), 'rb' ))
         return
 
