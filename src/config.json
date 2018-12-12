@@ -25,8 +25,8 @@
         "initExplore"     : 1,
         "exploreDec"      : 0.999999,
         "exploreDecEvery" : 100,
-        "printEvery"      : 10,
-        "totalIterations" : 100,
+        "printEvery"      : 25,
+        "totalIterations" : 5000,
         "memorySize"      : 5000,
         "sampleSize"      : 200,
         "nReduce"         : 0

@@ -90,7 +90,7 @@ def train():
         print('------------------------')
         # Update buffer should always contain some element
         # of exploration
-        allResults = generateMemories.memories( env, 1000, explorePolicy( exploreFactor ), episodeSize = memorySize )
+        allResults = generateMemories.memories( env, 10000, explorePolicy( exploreFactor ), episodeSize = memorySize )
         for i, result in enumerate(allResults):
             agents[i].updateBuffer(result, nReduce = nReduce)
 
