@@ -10,6 +10,7 @@ from torch.autograd import Variable
 from utils import utils, memory
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 
 class Actor(nn.Module):
     """Actor (Policy) Model."""
@@ -79,6 +80,12 @@ class Agent:
         self.criticSlow = Critic(**self.config['Critic'])
         self.criticOptimizer = optim.Adam( 
             self.criticFast.parameters(), lr=self.config['criticLR'] )
+        
+        if torch.cuda.is_available():
+            self.actorFast = self.actorFast.cuda()
+            self.actorSlow = self.actorSlow.cuda()
+            self.criticFast = self.criticFast.cuda()
+            self.criticSlow = self.criticSlow.cuda()
 
         # Create some buffer for learning
         self.buffer = memory.ReplayBuffer(self.config['ReplayBuffer']['maxEpisodes'])
@@ -108,7 +115,7 @@ class Agent:
         '''
 
         result = zip(*self.buffer.sample( nSamples ))
-        states, actions, rewards, next_states, dones = map(np.array, result)
+        states, actions, rewards, next_states, dones, cumRewards = map(np.array, result)
         
         states       = torch.from_numpy(states).float().to(device)
         actions      = torch.from_numpy(actions).float().to(device)
@@ -165,6 +172,8 @@ class Agent:
         torch.save( self.criticFast.state_dict(), os.path.join( folder, f'{name}.criticFast')  )
         torch.save( self.criticSlow.state_dict(), os.path.join( folder, f'{name}.criticSlow')  )
 
+        self.buffer.save(folder, name)
+
         return
 
     def load(self, folder, name):
@@ -173,6 +182,8 @@ class Agent:
         self.actorSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorSlow')  ))
         self.criticFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticFast')  ))
         self.criticSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticSlow')  ))
+
+        self.buffer.load(folder, name)
 
         return
 

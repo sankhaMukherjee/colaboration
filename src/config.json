@@ -1,33 +1,36 @@
 {
     "TODO" : {
         "train"        : false, 
-        "trainMemory"  : true, 
         "test"         : false,
+        "trainMemory"  : false, 
         "someTest" : {
             "TODO"             : false,
             "fillReplayBuffer" : false,
             "oneStep"          : false,
             "oneGame"          : false,
             "testActorCritic"  : false,
-            "testAgent"        : true
+            "testMemory"       : true,
+            "testAgent"        : false
         }
 
     }, 
 
     "UnityEnv" : {
-        "file_name"   : "../p3_collab-compet/Tennis.app",
-        "no_graphics" : true
+        "file_name"      : "../p3_collab-compet/Tennis_Linux/Tennis.x86_64",
+        "file_nameLinux" : "../p3_collab-compet/Tennis_Linux/Tennis.x86_64",
+        "file_nameMac"   : "../p3_collab-compet/Tennis.app",
+        "no_graphics"    : true
     },
 
     "training" : {
         "initExplore"     : 1,
         "exploreDec"      : 0.999999,
         "exploreDecEvery" : 100,
-        "printEvery"      : 100,
-        "totalIterations" : 20,
+        "printEvery"      : 25,
+        "totalIterations" : 5000,
         "memorySize"      : 5000,
         "sampleSize"      : 200,
-        "nReduce"         : 50
+        "nReduce"         : 0
     },
 
     "testing" : {
@@ -39,24 +42,24 @@
     },
 
     "Agent" : {
-        "actorLR"  : 1e-2,
-        "criticLR" : 1e-2,
+        "actorLR"  : 1e-4,
+        "criticLR" : 1e-4,
         "Tau"      : 0.001,
 
         "Actor" : {
             "state_size"  : 24,
             "action_size" : 2,
             "seed"        : 1234,
-            "fc1_units"   : 48,
-            "fc2_units"   : 25
+            "fc1_units"   : 512,
+            "fc2_units"   : 256
         },
 
         "Critic" : {
             "state_size"  : 24,
             "action_size" : 2,
             "seed"        : 1234,
-            "fcs1_units"  : 48,
-            "fc2_units"   : 25
+            "fcs1_units"  : 512,
+            "fc2_units"   : 256
         },
 
         "ReplayBuffer" : {

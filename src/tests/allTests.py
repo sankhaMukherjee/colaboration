@@ -104,6 +104,24 @@ def testActorCritic():
 
     return
 
+def testMemory():
+
+    from utils import generateMemories
+    from utils import utils
+
+    with utils.Env(showEnv=False, trainMode=True) as env:
+
+        m1, m2 = generateMemories.memories(
+            env,
+            nIterations = 200, 
+            policy      = utils.randomPolicy, 
+            episodeSize = 100)
+
+    for m in m1:
+        print(m)
+
+    return
+
 def testAgent():
 
     print('Testing the Agent ...')
@@ -164,8 +182,12 @@ def allTests():
     if config['TODO']['someTest']['testActorCritic']:
         testActorCritic()
 
+    if config['TODO']['someTest']['testMemory']:
+        testMemory()
+
     if config['TODO']['someTest']['testAgent']:
         testAgent()
+
 
 
 
