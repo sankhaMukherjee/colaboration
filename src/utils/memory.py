@@ -4,9 +4,23 @@ import pickle, os
 
 class ReplayBuffer:
 
-    def __init__(self, maxEpisodes):
-        self.maxEpisodes  = maxEpisodes
-        self.memory       = deque(maxlen=maxEpisodes)
+    def __init__(self, maxDataTuples):
+        '''The replay buffer
+        
+        Save data for the replay buffer
+        
+        Parameters
+        ----------
+        maxDataTuples : {int}
+            The size of the ``deque`` that is used for storing the
+            data tuples. This assumes that the data tuples are 
+            present in the form: ``(state, action, reward, next_state, 
+            done, cumRewards)``. This means that we assume that the 
+            data will have some form of cumulative reward pints associated
+            with each tuple.
+        '''
+        self.maxDataTuples  = maxDataTuples
+        self.memory       = deque(maxlen=maxDataTuples)
         return
 
     def append(self, result):

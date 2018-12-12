@@ -50,9 +50,11 @@ def train():
     agents     = [NN.Agent() for _ in range(nAgents)]
     allScores  = deque([], maxlen=100)
     allScores1 = [] # This saves the actual values
+    allQLoss, allALoss = [], []
 
     printEvery      = config['training']['printEvery']
     totalIterations = config['training']['totalIterations']
+    nSteps          = config['training']['nSteps']
     memorySize      = config['training']['memorySize']
     sampleSize      = config['training']['sampleSize']
     nReduce         = config['training']['nReduce']
@@ -79,8 +81,13 @@ def train():
         def policy(states):
             compActions   = compPolicy( states )
             randomActions = utils.randomPolicy( states )
-            actions       = (1-explore) * compActions + explore * randomActions
-            return actions
+
+            if np.random.rand() <= explore:
+                return randomActions
+            else:
+                return compActions
+            
+            return randomActions
 
         return policy
     
@@ -108,8 +115,14 @@ def train():
             for i, result in enumerate(allResults):
                 agents[i].updateBuffer(result, nReduce = nReduce)
 
-                # Learn from a sample of 50 tuples
-                agents[i].step( sampleSize )
+                # Learn from a sample of ``sampleSize`` tuples ``nSteps`` times
+                loss = [agents[i].step( sampleSize ) for _ in range(nSteps) ]
+                qLoss, aLoss = zip(*loss)
+                allQLoss.append( np.hstack(qLoss).mean() )
+                allALoss.append( np.hstack(aLoss).mean() )
+
+
+                agents[i].softUpdate()
 
             # Here, we need to play a set of episoodes to find the scores
             # allResults = env.episode(compPolicy, maxSteps = 5000)
@@ -121,8 +134,9 @@ def train():
             allScores1.append([np.sum(rewards1), np.mean(rewards1), np.std(rewards1)])
 
             if m%printEvery == 0:
-                tqdm.write('mean = {:9.5f}, max = {:9.5f}, explore = {}'.format(
-                    np.mean(allScores), np.std(allScores), exploreFactor ))
+                tqdm.write('mean = {:9.5f}, max = {:9.5f}, explore = {}, qLoss = {}, aLoss = {}'.format(
+                    np.mean(allScores), np.std(allScores), exploreFactor,
+                    np.array(allQLoss).mean(), np.array(allALoss).mean() ))
 
         folder = saveResults( allScores1 )
         for i, agent in enumerate(agents):

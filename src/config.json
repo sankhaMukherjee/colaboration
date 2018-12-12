@@ -1,6 +1,6 @@
 {
     "TODO" : {
-        "train"        : false, 
+        "train"        : true, 
         "test"         : false,
         "trainMemory"  : false, 
         "someTest" : {
@@ -26,10 +26,11 @@
         "initExplore"     : 1,
         "exploreDec"      : 0.999999,
         "exploreDecEvery" : 100,
-        "printEvery"      : 25,
-        "totalIterations" : 5000,
+        "printEvery"      : 10,
+        "totalIterations" : 1000,
+        "nSteps"          : 50,
         "memorySize"      : 5000,
-        "sampleSize"      : 200,
+        "sampleSize"      : 100,
         "nReduce"         : 0
     },
 
@@ -42,8 +43,8 @@
     },
 
     "Agent" : {
-        "actorLR"  : 1e-4,
-        "criticLR" : 1e-4,
+        "actorLR"  : 1e-3,
+        "criticLR" : 1e-3,
         "Tau"      : 0.001,
 
         "Actor" : {
@@ -63,7 +64,7 @@
         },
 
         "ReplayBuffer" : {
-            "maxEpisodes" : 5000
+            "maxDataTuples" : 5000
         }
 
     },

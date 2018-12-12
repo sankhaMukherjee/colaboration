@@ -68,6 +68,10 @@ class Critic(nn.Module):
 class Agent:
 
     def __init__(self):
+        '''This is the Agent class. 
+        
+        This comprises of two actors and two critics. The actors are 
+        '''
 
         self.config = json.load(open('config.json'))['Agent']
 
@@ -88,7 +92,7 @@ class Agent:
             self.criticSlow = self.criticSlow.cuda()
 
         # Create some buffer for learning
-        self.buffer = memory.ReplayBuffer(self.config['ReplayBuffer']['maxEpisodes'])
+        self.buffer = memory.ReplayBuffer(**self.config['ReplayBuffer'])
 
         return
 
@@ -121,16 +125,20 @@ class Agent:
         actions      = torch.from_numpy(actions).float().to(device)
         rewards      = torch.from_numpy(rewards).float().to(device)
         next_states  = torch.from_numpy(next_states).float().to(device)
+        cumRewards   = torch.from_numpy(cumRewards.reshape(-1, 1)).float().to(device)
 
         # ------------ Update the critics --------------------------
         nextActionHat  = self.actorSlow( next_states )
-        qValHat        = rewards + self.criticSlow( next_states, nextActionHat ) # * gamma (=1)
-        qVal           = self.criticFast( states, actions )
+        qVal           = rewards + self.criticSlow( next_states, nextActionHat ) # * gamma (=1)
+        qValHat        = self.criticFast( states, actions )
 
-        lossFnCritic = F.mse_loss(qValHat, qVal)
+        # lossFnCritic = F.mse_loss(qValHat, qVal)
+        lossFnCritic = F.mse_loss(qValHat, cumRewards)
         self.criticOptimizer.zero_grad()
         lossFnCritic.backward()
         self.criticOptimizer.step()
+
+        qLoss = F.mse_loss(qValHat, qVal).cpu().data.numpy()
 
         # ------------ Update the actors --------------------------
         actionHat   = self.actorFast( states )
@@ -140,17 +148,30 @@ class Agent:
         lossFnActor.backward()
         self.actorOptimizer.step()
 
-        del states, actions, rewards, next_states
+        aLoss = self.criticSlow( states, actionHat ).mean().cpu().data.numpy()
+
+        del states, actions, rewards, next_states, cumRewards
         del nextActionHat, qValHat, qVal
         del actionHat
         del lossFnCritic, lossFnActor
 
-        # ------------ Soft update the slow components -------------
-        self.softUpdate()
-
-        return
+        return qLoss, -aLoss
 
     def softUpdate(self, tau=None):
+        '''update the slow actors with the fast actors
+        
+        This function updates the weights of the slow-moving actor and critic with
+        a part of the weight of the fast-moving critic. The factor ``Tau`` is used
+        for the ratio of the fast-moving weights to transfer.
+
+        
+        Parameters
+        ----------
+        tau : {float}, optional
+            This is the ratio of the fast-moving actor and and critic that will be 
+            incorporated into the slow-moving components. (the default is None, 
+            which results in the value being taken form the config file.)
+        '''
 
         if tau is None:
             tau = self.config['Tau']
@@ -162,10 +183,40 @@ class Agent:
             v2.data.copy_( tau*v1 + (1-tau)*v2 )
 
     def updateBuffer(self, data, nReduce=0):
+        '''update the memory buffer with new data
+        
+        This function takes a list of data values, and updates the memory buffer
+        of the current agent. 
+        
+        Parameters
+        ----------
+        data : {list of tuples}
+            Each value of the tuple contains the following: 
+            ``(states, actions, rewards, next_states, dones, cumRewards)``. At one
+            go, this function will insert all the values that have been associated
+            with the current data. 
+        nReduce : {number}, optional
+            Depricated. Currently not used. This will be removed from future versions. 
+            (the default is 0, which [default_description])
+        '''
         self.buffer.appendMany( data )
         return
 
     def save(self, folder, name):
+        '''Save the model
+        
+        This function allows one to save a model, including the folder, and the weights
+        of the actors, critics as well as the memory buffer associated with the agent. A
+        name is supplied because in this case, there is more than a single agent. Hence,
+        the name supplied would be the name of the Agent.
+        
+        Parameters
+        ----------
+        folder : {str}
+            The path where the model is to be saved.
+        name : {str}
+            The name of the agent that is being saved.
+        '''
 
         torch.save( self.actorFast.state_dict(),  os.path.join( folder, f'{name}.actorFast')  )
         torch.save( self.actorSlow.state_dict(),  os.path.join( folder, f'{name}.actorSlow')  )
@@ -177,6 +228,19 @@ class Agent:
         return
 
     def load(self, folder, name):
+        '''Load an agent
+        
+        An agent saved with the save command can be loaded with the load command. This is useful
+        because we may want to either hot-start a training from a previous model, or we might
+        want to directly load the agent and test it. This will allow us to do that.
+        
+        Parameters
+        ----------
+        folder : {str}
+            The path from where the model is to be loaded.
+        name : {str}
+            The name of the agent that is being loaded.
+        '''
 
         self.actorFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorFast')  ))
         self.actorSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorSlow')  ))
