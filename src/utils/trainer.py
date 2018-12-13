@@ -13,7 +13,7 @@ config = json.load(open('config.json'))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # device = torch.device("cpu")
 
-def saveResults(allScores):
+def saveResults(allScores, allScores_1, qLoss, aLoss):
 
     now = dt.now().strftime('%Y-%m-%d--%H-%M-%S')
     folder = f'../results/{now}'
@@ -21,7 +21,9 @@ def saveResults(allScores):
 
     # ----------- Save the scores as an array ---------------
     allScores = np.array( allScores )
-    np.save( os.path.join(folder, 'scores.npy'), allScores )
+    allScores_1 = np.array( allScores )
+    np.save( os.path.join(folder, 'scoresAgent_0.npy'), allScores )
+    np.save( os.path.join(folder, 'scoresAgent_1.npy'), allScores_1 )
 
     # ----------- Save a plot of the scores ------------------
     plt.figure(figsize=(5,4))
@@ -35,7 +37,39 @@ def saveResults(allScores):
     ax2.set_ylabel('mean', color='orange')
     ax2.tick_params('y', colors='orange')
 
-    plt.savefig( os.path.join(folder, 'scores.png'), dpi=300)
+    plt.savefig( os.path.join(folder, 'scoresAgent_0.png'), dpi=300)
+    plt.close('all')
+
+    # ----------- Save a plot of the scores ------------------
+    plt.figure(figsize=(5,4))
+    ax1 = plt.axes([0.17, 0.1, 0.66, 0.8])
+    plt.plot( allScores_1[:,0], color='royalblue' )
+    ax1.set_ylabel('max', color='royalblue')
+    ax1.tick_params('y', colors='royalblue')
+
+    ax2 =  ax1.twinx()
+    ax2.plot( allScores_1[:,1], color='orange' )
+    ax2.set_ylabel('mean', color='orange')
+    ax2.tick_params('y', colors='orange')
+
+    plt.savefig( os.path.join(folder, 'scoresAgent_1.png'), dpi=300)
+    plt.close('all')
+
+    # ----------- Save a plot of the losses ------------------
+    plt.figure(figsize=(5,4))
+    ax1 = plt.axes([0.17, 0.1, 0.66, 0.8])
+    plt.plot( qLoss, color='royalblue' )
+    ax1.set_ylabel('critic loss function', color='royalblue')
+    ax1.tick_params('y', colors='royalblue')
+    ax1.set_yscale('log')
+
+    ax2 =  ax1.twinx()
+    ax2.plot( aLoss, color='orange' )
+    ax2.set_ylabel('actor loss function', color='orange')
+    ax2.tick_params('y', colors='orange')
+    # ax2.set_yscale('log')
+
+    plt.savefig( os.path.join(folder, 'losses.png'), dpi=300)
     plt.close('all')
 
     # ----------- Save a copy of the current config file -----------
@@ -49,16 +83,20 @@ def train():
     nAgents    = 2
     agents     = [NN.Agent() for _ in range(nAgents)]
     allScores  = deque([], maxlen=100)
-    allScores1 = [] # This saves the actual values
-    allQLoss, allALoss = [], []
+    allScores_0 = [] # This saves the actual values
+    allScores_1 = [] # This saves the actual values
+    allQLoss, allALoss = [[], []], [[], []]
 
-    printEvery      = config['training']['printEvery']
-    totalIterations = config['training']['totalIterations']
-    nSteps          = config['training']['nSteps']
-    memorySize      = config['training']['memorySize']
-    sampleSize      = config['training']['sampleSize']
-    exploreFactor   = config['training']['initExplore']
-    hotStart        = config['training']['hotStart']
+    printEvery       = config['training']['printEvery']
+    totalIterations  = config['training']['totalIterations']
+    nSteps           = config['training']['nSteps']
+    memorySize       = config['training']['memorySize']
+    sampleSize       = config['training']['sampleSize']
+    exploreFactor    = config['training']['initExplore']
+    hotStart         = config['training']['hotStart']
+    fillReplayBuffer = config['training']['fillReplayBuffer']
+
+    prevScore = -100
 
     def compPolicy(states):
             
@@ -93,14 +131,11 @@ def train():
     
     with utils.Env(showEnv=False, trainMode=True) as env:
         
-
-
-
         if hotStart is None:
             print('Generating memories ....')
             print('------------------------')
             
-            allResults = generateMemories.memories( env, 10000, explorePolicy( exploreFactor ), episodeSize = memorySize )
+            allResults = generateMemories.memories( env, fillReplayBuffer, explorePolicy( exploreFactor ), episodeSize = memorySize )
             for i, result in enumerate(allResults):
                 agents[i].updateBuffer(result)
         else:
@@ -125,28 +160,39 @@ def train():
 
                 # Learn from a sample of ``sampleSize`` tuples ``nSteps`` times
                 loss = [agents[i].step( sampleSize ) for _ in range(nSteps) ]
-                qLoss, aLoss = zip(*loss)
-                allQLoss.append( np.hstack(qLoss).mean() )
-                allALoss.append( np.hstack(aLoss).mean() )
-
-
                 agents[i].softUpdate()
 
+                qLoss, aLoss = zip(*loss)
+                allQLoss[i].append( np.hstack(qLoss).mean() )
+                allALoss[i].append( np.hstack(aLoss).mean() )
+
+
             # Here, we need to play a set of episoodes to find the scores
-            # allResults = env.episode(compPolicy, maxSteps = 5000)
             allResults = env.episode(compPolicy, maxSteps = 5000)
             rewards1 = np.array(list(zip(*allResults[0]))[2]) 
             rewards2 = np.array(list(zip(*allResults[1]))[2]) 
 
             allScores.append( max(rewards1.sum(), rewards2.sum()) )
-            allScores1.append([np.sum(rewards1), np.mean(rewards1), np.std(rewards1)])
+            allScores_0.append([np.sum(rewards1), np.mean(rewards1), np.std(rewards1)])
+            allScores_1.append([np.sum(rewards2), np.mean(rewards2), np.std(rewards2)])
+
+            # We should save the agent at every step ... 
+            # -------------------------------------------
+            if prevScore <= allScores[-1]:
+                prevScore = allScores[-1]
+
+                folder = f'../results/tmp/[{m}]-[{prevScore}]'
+                os.makedirs(folder)
+
+                for i, agent in enumerate(agents):
+                    agent.save(folder, f'Agent_{i}')
 
             if m%printEvery == 0:
                 tqdm.write('mean = {:9.5f}, max = {:9.5f}, explore = {}, qLoss = {}, aLoss = {}'.format(
                     np.mean(allScores), np.std(allScores), exploreFactor,
-                    np.array(allQLoss).mean(), np.array(allALoss).mean() ))
+                    np.array(allQLoss[0])[-1], np.array(allALoss[0])[-1] ))
 
-        folder = saveResults( allScores1 )
+        folder = saveResults( allScores_0, allScores_1, allQLoss[0], allALoss[0] )
         for i, agent in enumerate(agents):
             agent.save( folder, f'Agent_{i}' )
                 

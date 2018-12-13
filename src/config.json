@@ -23,15 +23,16 @@
     },
 
     "training" : {
-        "initExplore"     : 1,
-        "exploreDec"      : 0.999999,
-        "exploreDecEvery" : 100,
-        "printEvery"      : 10,
-        "totalIterations" : 10,
-        "nSteps"          : 50,
-        "memorySize"      : 5000,
-        "sampleSize"      : 100,
-        "hotStart"        : "../results/2018-12-12--22-11-32"
+        "initExplore"       : 1,
+        "exploreDec"        : 0.999999,
+        "exploreDecEvery"   : 100,
+        "printEvery"        : 10,
+        "totalIterations"   : 2500,
+        "nSteps"            : 50,
+        "memorySize"        : 5000,
+        "sampleSize"        : 100,
+        "fillReplayBuffer"  : 10000,
+        "hotStart"          : null
     },
 
     "testing" : {
@@ -43,7 +44,7 @@
     },
 
     "Agent" : {
-        "actorLR"  : 1e-3,
+        "actorLR"  : 1e-4,
         "criticLR" : 1e-3,
         "Tau"      : 0.001,
 
