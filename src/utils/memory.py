@@ -69,7 +69,7 @@ class ReplayBuffer:
         if N*3 >= len(self.memory):
             return
 
-        state, action, reward, next_state, done, cumRewards = zip(*self.memory)
+        state, action, reward, next_state, done, cumRewards, totalHits = zip(*self.memory)
 
         reward = np.abs(reward) + epsilon # learn both bad and good
         reward = 1/reward
@@ -104,11 +104,11 @@ class ReplayBuffer:
         '''
 
         result = zip(*self.memory)
-        state, action, reward, next_state, done, cumRewards = result
+        state, action, reward, next_state, done, cumRewards, totalHits = result
 
-        cumRewards = np.array(cumRewards)
-        cumRewards = cumRewards + epsilon
-        prob       = cumRewards / cumRewards.sum()
+        x = np.array(cumRewards + totalHits)
+        x = x + epsilon
+        prob       = x / x.sum()
 
         choice = np.random.choice( np.arange( len(self.memory) ), nSamples, p = prob )
         # choice = np.random.choice( np.arange( len(self.memory) ), nSamples )

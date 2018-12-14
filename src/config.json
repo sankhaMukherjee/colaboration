@@ -23,8 +23,9 @@
     },
 
     "training" : {
+        "comment"           : "changed the critic loss function to the original",
         "initExplore"       : 1,
-        "exploreDec"        : 0.999999,
+        "exploreDec"        : 0.99999,
         "exploreDecEvery"   : 100,
         "printEvery"        : 10,
         "totalIterations"   : 2500,

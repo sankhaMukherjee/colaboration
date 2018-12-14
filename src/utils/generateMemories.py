@@ -57,21 +57,34 @@ def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.0
 
             state, action, reward, next_state, done = zip(*result)
             reward    = np.array(reward)
-            cumReward = [ np.sum(reward[i+1:] * (gamma ** np.arange(len(reward)-i-1))) for i in range(len(reward)-1)]
+            cumReward = [ np.sum(reward[j+1:] * (gamma ** np.arange(len(reward)-j-1))) for j in range(len(reward)-1)]
             cumReward = np.array( cumReward )
 
+            totalHits = []
+            for j in range(len(reward)):
+                before = sum(reward[:j] > 0.09)
+                after  = np.any( reward[j:] > 0.09 )*1
+                totalHits.append((before+after)*after)
+                
             # Save the cumulative rewards without decay. This will allow the 
             # rewards to be plotted properly
-            cumReward1 = [ np.sum(reward[i+1:]) for i in range(len(reward)-1)]
+            cumReward1 = [ np.sum(reward[j+1:]) for j in range(len(reward)-1)]
             cumReward1 = np.array( cumReward1 )
             
             if np.any( cumReward > filterVal ):
+                if reward.sum() > 0.11:
+                    tqdm.write('maxScore for Agent {} : {}'.format( i, reward.sum() ))
+                    # tqdm.write('rewards    {} : {}'.format( i, reward ))
+                    # tqdm.write('Total Hits {} : {}'.format( i, totalHits ))
+                    # tqdm.write('Cumrewards {} : {}'.format( i, cumReward ))
+                    # tqdm.write('Cumreward1 {} : {}'.format( i, cumReward1 ))
+                
                 mask      = cumReward > filterVal
                 maskNums  = np.arange(len(mask))[ mask ]
 
                 # Generate the masked data ...
                 for n in maskNums:
-                    tup = state[n] , action[n], reward[n], next_state[n], done[n], cumReward1[n]
+                    tup = state[n] , action[n], reward[n], next_state[n], done[n], cumReward1[n], totalHits[n]
                     memories[i].append(tup)
 
     return memories

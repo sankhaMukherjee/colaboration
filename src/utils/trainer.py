@@ -144,6 +144,13 @@ def train():
             for i in range(2):
                 agents[i].load(hotStart, f'Agent_{i}')
 
+            print('Generating memories ....')
+            print('------------------------')
+            
+            allResults = generateMemories.memories( env, fillReplayBuffer, explorePolicy( exploreFactor ), episodeSize = memorySize )
+            for i, result in enumerate(allResults):
+                agents[i].updateBuffer(result)
+
         for m in tqdm(range(totalIterations)):
 
             env.reset()
