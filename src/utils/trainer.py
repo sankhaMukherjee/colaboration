@@ -90,11 +90,16 @@ def train():
     printEvery       = config['training']['printEvery']
     totalIterations  = config['training']['totalIterations']
     nSteps           = config['training']['nSteps']
-    memorySize       = config['training']['memorySize']
+    
     sampleSize       = config['training']['sampleSize']
-    exploreFactor    = config['training']['initExplore']
     hotStart         = config['training']['hotStart']
+    
+    # Replay buffer stuff
+    memorySize       = config['training']['memorySize']
+    exploreFactor    = config['training']['initExplore']
     fillReplayBuffer = config['training']['fillReplayBuffer']
+    filterVal        = config['training']['filterVal']
+    minScoreAdd      = config['training']['minScoreAdd']
 
     prevScore = -100
 
@@ -135,7 +140,12 @@ def train():
             print('Generating memories ....')
             print('------------------------')
             
-            allResults = generateMemories.memories( env, fillReplayBuffer, explorePolicy( exploreFactor ), episodeSize = memorySize )
+            allResults = generateMemories.memories( env, fillReplayBuffer, 
+                explorePolicy( exploreFactor ), 
+                episodeSize = memorySize,
+                filterVal   = filterVal,
+                minScoreAdd = minScoreAdd
+                 )
             for i, result in enumerate(allResults):
                 agents[i].updateBuffer(result)
         else:
@@ -147,7 +157,12 @@ def train():
             print('Generating memories ....')
             print('------------------------')
             
-            allResults = generateMemories.memories( env, fillReplayBuffer, explorePolicy( exploreFactor ), episodeSize = memorySize )
+            allResults = generateMemories.memories( env, fillReplayBuffer, 
+                explorePolicy( exploreFactor ), 
+                episodeSize = memorySize,
+                filterVal   = filterVal,
+                minScoreAdd = minScoreAdd
+                )
             for i, result in enumerate(allResults):
                 agents[i].updateBuffer(result)
 
@@ -157,7 +172,11 @@ def train():
 
             # Update buffer should always contain some element
             # of exploration
-            allResults = generateMemories.memories( env, 10, explorePolicy( exploreFactor ), episodeSize = memorySize )
+            allResults = generateMemories.memories( env, 10, 
+                explorePolicy( 0 ), 
+                episodeSize = memorySize,
+                filterVal   = filterVal,
+                minScoreAdd = minScoreAdd )
 
             if m % config['training']['exploreDecEvery'] == 0:
                 exploreFactor *= config['training']['exploreDec']
@@ -196,7 +215,7 @@ def train():
 
             if m%printEvery == 0:
                 tqdm.write('mean = {:9.5f}, max = {:9.5f}, explore = {}, qLoss = {}, aLoss = {}'.format(
-                    np.mean(allScores), np.std(allScores), exploreFactor,
+                    np.mean(allScores), np.max(allScores), exploreFactor,
                     np.array(allQLoss[0])[-1], np.array(allALoss[0])[-1] ))
 
         folder = saveResults( allScores_0, allScores_1, allQLoss[0], allALoss[0] )

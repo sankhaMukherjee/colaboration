@@ -3,7 +3,7 @@ from utils import utils
 import numpy as np
 
 
-def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.03):
+def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.03, minScoreAdd=0.09):
     '''generate a set of memories to append it to the data
     
     This function takes a Unity Environment and plays with it, uisng the supplied
@@ -48,7 +48,7 @@ def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.0
     '''
         
     memories = [[] for i in range(2)]
-    for m in tqdm(range(nIterations)):
+    for m in range(nIterations):
 
         env.reset()
 
@@ -82,10 +82,12 @@ def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.0
                 mask      = cumReward > filterVal
                 maskNums  = np.arange(len(mask))[ mask ]
 
-                # Generate the masked data ...
-                for n in maskNums:
-                    tup = state[n] , action[n], reward[n], next_state[n], done[n], cumReward1[n], totalHits[n]
-                    memories[i].append(tup)
+                if reward.sum() > minScoreAdd:
+                    # We dont want to flood memories with single hits
+                    # Generate the masked data ...
+                    for n in maskNums:
+                        tup = state[n] , action[n], reward[n], next_state[n], done[n], cumReward1[n], totalHits[n]
+                        memories[i].append(tup)
 
     return memories
 
