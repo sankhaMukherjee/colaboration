@@ -106,9 +106,9 @@ class ReplayBuffer:
         result = zip(*self.memory)
         state, action, reward, next_state, done, cumRewards, totalHits = result
 
-        x = np.array(cumRewards + totalHits)
-        x = x + epsilon
-        prob       = x / x.sum()
+        x    = np.array(cumRewards) + np.array(totalHits)
+        x    = x + epsilon
+        prob = x / x.sum()
 
         choice = np.random.choice( np.arange( len(self.memory) ), nSamples, p = prob )
         # choice = np.random.choice( np.arange( len(self.memory) ), nSamples )

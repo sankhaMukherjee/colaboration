@@ -17,3 +17,5 @@ env/
 # Dont add the continuous control
 p3_collab-compet/
 
+# Dont save the temporary files for now
+results/*-tmp

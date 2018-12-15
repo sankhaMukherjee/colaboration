@@ -23,17 +23,17 @@
     },
 
     "training" : {
-        "comment"           : "changed the critic loss function to the original",
-        "initExplore"       : 1,
-        "exploreDec"        : 0.99999,
+        "comment"           : "use the number of hits with hot start and own game play",
+        "initExplore"       : 0.7,
+        "exploreDec"        : 0.9999,
         "exploreDecEvery"   : 100,
         "printEvery"        : 10,
-        "totalIterations"   : 2500,
+        "totalIterations"   : 5000,
         "nSteps"            : 50,
         "memorySize"        : 5000,
         "sampleSize"        : 100,
-        "fillReplayBuffer"  : 10000,
-        "hotStart"          : null
+        "fillReplayBuffer"  : 1,
+        "hotStart"          : "../results/2018-12-14--22-54-48-use-numHits-also-tmp/[1132]-[0.20000000298023224]"
     },
 
     "testing" : {
