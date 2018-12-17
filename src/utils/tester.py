@@ -8,7 +8,7 @@ from utils import utils, NN
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # device = torch.device("cpu")
 
-def testing( folders, nTimes=5 ):
+def testing( folders, nTimes=5, map_location=None ):
 
     # Load the agents ...
     nAgents    = 2
@@ -24,7 +24,7 @@ def testing( folders, nTimes=5 ):
         states  = torch.from_numpy(states).float().to(device)
         actions = []
         for i, s in enumerate(states):
-            actions.append( agents[i].actorFast( s ).cpu().data.numpy().reshape(-1, 2) )
+            actions.append( agents[i].actorSlow( s ).cpu().data.numpy().reshape(-1, 2) )
         del states
 
         actions = np.vstack( actions )
@@ -35,7 +35,7 @@ def testing( folders, nTimes=5 ):
         for folder in folders:
             print(f'Loading data from folder : [{folder}]')
             for i, agent in enumerate(agents):
-                agent.load( folder, f'Agent_{i}' )
+                agent.load( folder, f'Agent_{i}', map_location = map_location )
 
             for i in range(nTimes):
                 env.reset()

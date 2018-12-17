@@ -227,7 +227,7 @@ class Agent:
 
         return
 
-    def load(self, folder, name):
+    def load(self, folder, name, map_location=None):
         '''Load an agent
         
         An agent saved with the save command can be loaded with the load command. This is useful
@@ -242,10 +242,17 @@ class Agent:
             The name of the agent that is being loaded.
         '''
 
-        self.actorFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorFast')  ))
-        self.actorSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorSlow')  ))
-        self.criticFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticFast')  ))
-        self.criticSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticSlow')  ))
+        if map_location is None:
+            self.actorFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorFast')    ))
+            self.actorSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorSlow')    ))
+            self.criticFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticFast')  ))
+            self.criticSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticSlow')  ))
+        else:
+            print('----------------')
+            self.actorFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorFast')   , map_location = map_location ))
+            self.actorSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorSlow')   , map_location = map_location ))
+            self.criticFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticFast') , map_location = map_location ))
+            self.criticSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticSlow') , map_location = map_location ))
 
         self.buffer.load(folder, name)
 
