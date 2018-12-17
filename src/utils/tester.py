@@ -36,6 +36,7 @@ def testing( folders, nTimes=5, map_location=None ):
             print(f'Loading data from folder : [{folder}]')
             for i, agent in enumerate(agents):
                 agent.load( folder, f'Agent_{i}', map_location = map_location )
+                # agent.load( folder, f'Agent_0', map_location = map_location )
 
             for i in range(nTimes):
                 env.reset()
