@@ -3,7 +3,7 @@ from utils import utils
 import numpy as np
 
 
-def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.03, minScoreAdd=0.09):
+def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.03, minScoreAdd=0.09, propBad=0.03):
     '''generate a set of memories to append it to the data
     
     This function takes a Unity Environment and plays with it, uisng the supplied
@@ -31,14 +31,20 @@ def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.0
     nIterations : {int}
         Number of episodes that the agents should play so that we are able to
         generate the right episode. 
-    policy : {[type]}
-        [description]
-    episodeSize : {[type]}
-        [description]
-    gamma : {number}, optional
-        [description] (the default is 0.8, which [default_description])
-    filterVal : {number}, optional
-        [description] (the default is 0.03, which [default_description])
+    policy : {function}
+        This takes a state and returns the action for each agent.
+    episodeSize : {integer}
+        The total iteration size that one episode will have to go through.
+    gamma : real, optional
+        The value of the discount factor that will be used for the calculation of how close 
+        a timepoint will have to be for insertion into the ReplayBuffer (the default is 0.8)
+    filterVal : real, optional
+        values of cumulative sum below this are considered for insertion into the ReplayBuffer (
+        the default is 0.03)
+    propBad : {number}, optional
+        proportional of bad values that this should be inserted into the data buffer (the default 
+        is 0.03, which results in about 3% of the times bad data is encounteres, it will be inserted
+        into the ReplayBuffer)
     
     Returns
     -------
@@ -88,6 +94,15 @@ def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.0
                     for n in maskNums:
                         tup = state[n] , action[n], reward[n], next_state[n], done[n], cumReward1[n], totalHits[n]
                         memories[i].append(tup)
+
+            elif np.random.rand() <= propBad:
+
+                for n in range( len(state) ):
+                        tup = state[n] , action[n], reward[n], next_state[n], done[n], -0.001, 0
+                        memories[i].append(tup)
+
+            else:
+                pass
 
     return memories
 

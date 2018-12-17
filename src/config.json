@@ -1,7 +1,7 @@
 {
     "TODO" : {
-        "train"        : false, 
-        "test"         : true,
+        "train"        : true, 
+        "test"         : false,
         "trainMemory"  : false, 
         "someTest" : {
             "TODO"             : false,
@@ -16,26 +16,27 @@
     }, 
 
     "UnityEnv" : {
-        "file_name"      : "../p3_collab-compet/Tennis.app",
+        "file_name"      : "../p3_collab-compet/Tennis_Linux/Tennis.x86_64",
         "file_nameLinux" : "../p3_collab-compet/Tennis_Linux/Tennis.x86_64",
         "file_nameMac"   : "../p3_collab-compet/Tennis.app",
         "no_graphics"    : true
     },
 
     "training" : {
-        "comment"           : "use the number of hits with hot start and own game play",
-        "initExplore"       : 0.3,
+        "comment"           : "bigger buffer, added the probBad parameter, cumRewards again, longer run",
+        "initExplore"       : 1,
         "exploreDec"        : 0.9999,
         "exploreDecEvery"   : 100,
         "printEvery"        : 10,
         "totalIterations"   : 5000,
-        "nSteps"            : 50,
-        "memorySize"        : 5000,
+        "nSteps"            : 10,
+        "episodeSize"       : 5000,
         "sampleSize"        : 100,
         "fillReplayBuffer"  : 10000,
-        "minScoreAdd"       : 0.11,
+        "minScoreAdd"       : 0.09,
         "filterVal"         : 0.02,
-        "hotStart"          : "../results/2018-12-15--16-44-58-computationAfterNumHits-tmp/[244]-[0.4000000059604645]"
+        "propBad"           : 0.003,
+        "hotStart"          : null
     },
 
     "testing" : {
@@ -68,7 +69,7 @@
         },
 
         "ReplayBuffer" : {
-            "maxDataTuples" : 5000
+            "maxDataTuples" : 500000
         }
 
     },

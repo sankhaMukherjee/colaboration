@@ -107,6 +107,7 @@ class ReplayBuffer:
         state, action, reward, next_state, done, cumRewards, totalHits = result
 
         x    = np.array(cumRewards) + np.array(totalHits)
+        x   -= x.min()
         x    = x + epsilon
         prob = x / x.sum()
 
