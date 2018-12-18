@@ -95,6 +95,7 @@ def train():
     
     sampleSize       = config['training']['sampleSize']
     hotStart         = config['training']['hotStart']
+    Agents           = config['training']['Agents']
     
     # Replay buffer stuff
     episodeSize      = config['training']['episodeSize']
@@ -148,7 +149,8 @@ def train():
                 episodeSize = episodeSize,
                 filterVal   = filterVal,
                 propBad     = propBad,
-                minScoreAdd = minScoreAdd
+                minScoreAdd = minScoreAdd,
+                policy1 = compPolicy
                  )
             for i, result in enumerate(allResults):
                 agents[i].updateBuffer(result)
@@ -156,7 +158,7 @@ def train():
             print(f'Hot-starting agents from a previous state [{hotStart}]')
             print('---------------------------------------------------------------------------')
             for i in range(2):
-                agents[i].load(hotStart, f'Agent_{i}')
+                agents[i].load(hotStart, Agents[i])
 
             print('Generating memories ....')
             print('------------------------')
@@ -166,7 +168,8 @@ def train():
                 episodeSize = episodeSize,
                 filterVal   = filterVal,
                 propBad     = propBad,
-                minScoreAdd = minScoreAdd
+                minScoreAdd = minScoreAdd,
+                policy1 = compPolicy
                 )
             for i, result in enumerate(allResults):
                 agents[i].updateBuffer(result)
@@ -182,7 +185,8 @@ def train():
                 episodeSize = episodeSize,
                 filterVal   = filterVal,
                 propBad     = propBad,
-                minScoreAdd = minScoreAdd )
+                minScoreAdd = minScoreAdd,
+                policy1 = compPolicy )
 
             if m % config['training']['exploreDecEvery'] == 0:
                 exploreFactor *= config['training']['exploreDec']

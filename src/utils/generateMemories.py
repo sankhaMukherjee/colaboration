@@ -3,7 +3,7 @@ from utils import utils
 import numpy as np
 
 
-def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.03, minScoreAdd=0.09, propBad=0.03):
+def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.03, minScoreAdd=0.09, propBad=0.03, policy1=None, t1=14):
     '''generate a set of memories to append it to the data
     
     This function takes a Unity Environment and plays with it, uisng the supplied
@@ -58,7 +58,11 @@ def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.0
 
         env.reset()
 
-        results = env.episode( policy, episodeSize )
+        if policy1 is None:
+            results = env.episode( policy, episodeSize )
+        else:
+            results = env.episode( policy, episodeSize, policy1, t1 )
+
         for i, result in enumerate(results):
 
             state, action, reward, next_state, done = zip(*result)

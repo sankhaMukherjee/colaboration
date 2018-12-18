@@ -66,7 +66,7 @@ class Env:
 
         return results
 
-    def episode(self, policy, maxSteps=None):
+    def episode(self, policy, maxSteps=None, policy1=None, t1=None):
 
         self.reset()
         stepCount     = 0
@@ -74,7 +74,11 @@ class Env:
 
         while True:
             stepCount += 1
-            results = self.step(policy)
+
+            if (policy1 is not None) and (stepCount < t1):
+                results = self.step(policy1)
+            else:
+                results = self.step(policy)
 
             finished = False
 
