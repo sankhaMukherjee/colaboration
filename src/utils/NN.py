@@ -248,7 +248,6 @@ class Agent:
             self.criticFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticFast')  ))
             self.criticSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticSlow')  ))
         else:
-            print('----------------')
             self.actorFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorFast')   , map_location = map_location ))
             self.actorSlow.load_state_dict(torch.load( os.path.join( folder, f'{name}.actorSlow')   , map_location = map_location ))
             self.criticFast.load_state_dict(torch.load( os.path.join( folder, f'{name}.criticFast') , map_location = map_location ))
