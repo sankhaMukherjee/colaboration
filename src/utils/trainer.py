@@ -43,13 +43,13 @@ def saveResults(allScores, allScores_1, qLoss, aLoss, qLoss1, aLoss1):
     # ----------- Save a plot of the scores ------------------
     plt.figure(figsize=(5,4))
     ax1 = plt.axes([0.17, 0.1, 0.66, 0.8])
-    plt.plot( allScores_1[:,0], color='royalblue' )
-    ax1.set_ylabel('max', color='royalblue')
+    plt.plot( allScores_1[:,1], color='royalblue' )
+    ax1.set_ylabel('mean', color='royalblue')
     ax1.tick_params('y', colors='royalblue')
 
     ax2 =  ax1.twinx()
-    ax2.plot( allScores_1[:,1], color='orange' )
-    ax2.set_ylabel('mean', color='orange')
+    ax2.plot( allScores_1[:,0], color='orange' )
+    ax2.set_ylabel('max', color='orange')
     ax2.tick_params('y', colors='orange')
 
     plt.savefig( os.path.join(folder, 'scoresAgent_1.png'), dpi=300)
@@ -145,12 +145,12 @@ def train():
             print('------------------------')
             
             allResults = generateMemories.memories( env, fillReplayBuffer, 
-                explorePolicy( exploreFactor ), 
+                explorePolicy( 0.6 ), 
                 episodeSize = episodeSize,
                 filterVal   = filterVal,
                 propBad     = propBad,
                 minScoreAdd = minScoreAdd,
-                policy1 = compPolicy
+                policy1 = explorePolicy( 0.6 )
                  )
             for i, result in enumerate(allResults):
                 agents[i].updateBuffer(result)
@@ -164,12 +164,12 @@ def train():
             print('------------------------')
             
             allResults = generateMemories.memories( env, fillReplayBuffer, 
-                explorePolicy( exploreFactor ), 
+                explorePolicy( 0.6 ), 
                 episodeSize = episodeSize,
                 filterVal   = filterVal,
                 propBad     = propBad,
                 minScoreAdd = minScoreAdd,
-                policy1 = compPolicy
+                policy1 = explorePolicy( 0.6 )
                 )
             for i, result in enumerate(allResults):
                 agents[i].updateBuffer(result)
@@ -181,12 +181,12 @@ def train():
             # Update buffer should always contain some element
             # of exploration
             allResults = generateMemories.memories( env, 10, 
-                explorePolicy( 0 ), 
+                explorePolicy( 0.6 ), 
                 episodeSize = episodeSize,
                 filterVal   = filterVal,
                 propBad     = propBad,
                 minScoreAdd = minScoreAdd,
-                policy1 = compPolicy )
+                policy1 = explorePolicy( 0.6 ) )
 
             if m % config['training']['exploreDecEvery'] == 0:
                 exploreFactor *= config['training']['exploreDec']
@@ -214,7 +214,7 @@ def train():
 
             # We should save the agent at every step ... 
             # -------------------------------------------
-            if prevScore <= allScores[-1]:
+            if (prevScore <= allScores[-1]) and (allScores[-1] > 1e-3):
                 prevScore = allScores[-1]
 
                 folder = f'../results/tmp/[{m}]-[{prevScore}]'

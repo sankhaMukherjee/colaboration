@@ -23,21 +23,21 @@
     },
 
     "training" : {
-        "comment"           : "Initialize with the same agents and see what happens. Do a small run ...",
-        "initExplore"       : 0.9,
+        "comment"           : "Both get the same memory, ... ",
+        "initExplore"       : 0.6,
         "exploreDec"        : 0.999,
         "exploreDecEvery"   : 100,
         "printEvery"        : 10,
-        "totalIterations"   : 10000,
+        "totalIterations"   : 2500,
         "nSteps"            : 10,
         "episodeSize"       : 5000,
         "sampleSize"        : 100,
         "fillReplayBuffer"  : 10000,
-        "minScoreAdd"       : 0.18,
+        "minScoreAdd"       : 0.01,
         "filterVal"         : 0.02,
         "propBad"           : 0.003,
-        "hotStart"          : "../results/2018-12-17--20-16-55-LongerRun-tmp/[2000]-[0.10000000149011612]",
-        "Agents"            : ["Agent_0", "Agent_0"]
+        "hotStart"          : "../results/2018-12-24--17-48-49",
+        "Agents"            : ["Agent_0", "Agent_1"]
     },
 
     "testing" : {
@@ -57,16 +57,16 @@
             "state_size"  : 24,
             "action_size" : 2,
             "seed"        : 1234,
-            "fc1_units"   : 512,
-            "fc2_units"   : 256
+            "fc1_units"   : 128,
+            "fc2_units"   : 64
         },
 
         "Critic" : {
             "state_size"  : 24,
             "action_size" : 2,
             "seed"        : 1234,
-            "fcs1_units"  : 512,
-            "fc2_units"   : 256
+            "fcs1_units"  : 128,
+            "fc2_units"   : 64
         },
 
         "ReplayBuffer" : {

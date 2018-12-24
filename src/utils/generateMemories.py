@@ -56,6 +56,9 @@ def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.0
     memories = [[] for i in range(2)]
     for m in range(nIterations):
 
+        if m % 50 == 0:
+            print('\r{} complete                               '.format( m*100.0/nIterations ), end='', flush=True)
+
         env.reset()
 
         if policy1 is None:
@@ -97,13 +100,15 @@ def memories(env, nIterations, policy, episodeSize, gamma = 0.8, filterVal = 0.0
                     # Generate the masked data ...
                     for n in maskNums:
                         tup = state[n] , action[n], reward[n], next_state[n], done[n], cumReward1[n], totalHits[n]
-                        memories[i].append(tup)
+                        memories[0].append(tup)
+                        memories[1].append(tup)
 
             elif np.random.rand() <= propBad:
 
                 for n in range( len(state) ):
                         tup = state[n] , action[n], reward[n], next_state[n], done[n], -0.001, 0
-                        memories[i].append(tup)
+                        memories[0].append(tup)
+                        memories[1].append(tup)
 
             else:
                 pass
