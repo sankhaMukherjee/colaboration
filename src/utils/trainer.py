@@ -111,6 +111,8 @@ def train():
             
         actions = []
         for i, s in enumerate(states):
+            if len(s.shape) == 1:
+                s = s.reshape((1, -1))
             s  = torch.from_numpy(s).float().to(device)
             actions.append( agents[i].actorSlow( s ).cpu().data.numpy().reshape(-1, 2) )
 

@@ -28,15 +28,15 @@
         "exploreDec"        : 0.999,
         "exploreDecEvery"   : 100,
         "printEvery"        : 10,
-        "totalIterations"   : 2500,
+        "totalIterations"   : 100,
         "nSteps"            : 10,
         "episodeSize"       : 5000,
         "sampleSize"        : 100,
-        "fillReplayBuffer"  : 10000,
+        "fillReplayBuffer"  : 100,
         "minScoreAdd"       : 0.01,
         "filterVal"         : 0.02,
         "propBad"           : 0.003,
-        "hotStart"          : "../results/2018-12-24--17-48-49",
+        "hotStart"          : null,
         "Agents"            : ["Agent_0", "Agent_1"]
     },
 
@@ -57,16 +57,18 @@
             "state_size"  : 24,
             "action_size" : 2,
             "seed"        : 1234,
-            "fc1_units"   : 128,
-            "fc2_units"   : 64
+            "fc1_units"   : 64,
+            "fc2_units"   : 64,
+            "fc3_units"   : 64
         },
 
         "Critic" : {
             "state_size"  : 24,
             "action_size" : 2,
             "seed"        : 1234,
-            "fcs1_units"  : 128,
-            "fc2_units"   : 64
+            "fcs1_units"  : 64,
+            "fc2_units"   : 64,
+            "fc3_units"   : 64
         },
 
         "ReplayBuffer" : {
