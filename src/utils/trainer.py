@@ -216,6 +216,13 @@ def train():
 
             # We should save the agent at every step ... 
             # -------------------------------------------
+            if m % 100 == 0:
+                folder = f'../results/tmp_N/[{m}]'
+                os.makedirs(folder)
+
+                for i, agent in enumerate(agents):
+                    agent.save(folder, f'Agent_{i}')
+
             if (prevScore <= allScores[-1]) and (allScores[-1] > 1e-3):
                 prevScore = allScores[-1]
 

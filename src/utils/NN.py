@@ -42,9 +42,9 @@ class Actor(nn.Module):
 
     def forward(self, state):
         """Build an actor (policy) network that maps states -> actions."""
-        x = F.relu(self.bn1(self.fc1(state)))
-        x = F.relu(self.bn2(self.fc2(x)))
-        x = F.relu(self.bn3(self.fc3(x)))
+        x = F.tanh(self.bn1(self.fc1(state)))
+        x = F.tanh(self.bn2(self.fc2(x)))
+        x = F.tanh(self.bn3(self.fc3(x)))
         return F.tanh(self.bn4(self.fc4(x)))
 
 class Critic(nn.Module):
@@ -77,10 +77,10 @@ class Critic(nn.Module):
 
     def forward(self, state, action):
         """Build a critic (value) network that maps (state, action) pairs -> Q-values."""
-        xs = F.relu(self.bn1(self.fcs1(state)))
+        xs = F.tanh(self.bn1(self.fcs1(state)))
         x = torch.cat((xs, action), dim=1) # axis = 1
-        x = F.relu(self.bn2(self.fc2(x)))
-        x = F.relu(self.bn3(self.fc3(x)))
+        x = F.tanh(self.bn2(self.fc2(x)))
+        x = F.tanh(self.bn3(self.fc3(x)))
         return self.fc4(x)
 
 class Agent:
@@ -162,10 +162,16 @@ class Agent:
         qVal           = rewards + self.criticSlow( next_states, nextActionHat ) # * gamma (=1)
         qValHat        = self.criticFast( states, actions )
 
-        # lossFnCritic = F.mse_loss(qValHat, qVal)
-        lossFnCritic = F.mse_loss(qValHat, cumRewards)
+        lossFnCritic = F.mse_loss(qValHat, qVal)
+        # lossFnCritic = F.mse_loss(qValHat, cumRewards)
         self.criticOptimizer.zero_grad()
         lossFnCritic.backward()
+
+        # Gradient clipping ...
+        # nn.utils.clip_grad_norm(self.criticFast.parameters(), 0.25)
+        # for p in self.criticFast.parameters():
+        #     p.data.add_(-1e-4, p.grad.data)
+
         self.criticOptimizer.step()
 
         qLoss = F.mse_loss(qValHat, qVal).cpu().data.numpy()
@@ -176,6 +182,12 @@ class Agent:
 
         self.actorOptimizer.zero_grad()
         lossFnActor.backward()
+
+        # Gradient clipping ... 
+        # This is very erratic ....
+        # nn.utils.clip_grad_norm(self.actorFast.parameters(), 0.25)
+        # for p in self.actorFast.parameters():
+        #     p.data.add_(-1e-4, p.grad.data)
         self.actorOptimizer.step()
 
         aLoss = self.criticSlow( states, actionHat ).mean().cpu().data.numpy()

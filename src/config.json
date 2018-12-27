@@ -24,15 +24,15 @@
 
     "training" : {
         "comment"           : "Both get the same memory, ... ",
-        "initExplore"       : 0.6,
+        "initExplore"       : 0.9,
         "exploreDec"        : 0.999,
         "exploreDecEvery"   : 100,
         "printEvery"        : 10,
-        "totalIterations"   : 100,
+        "totalIterations"   : 5000,
         "nSteps"            : 10,
         "episodeSize"       : 5000,
         "sampleSize"        : 100,
-        "fillReplayBuffer"  : 100,
+        "fillReplayBuffer"  : 10000,
         "minScoreAdd"       : 0.01,
         "filterVal"         : 0.02,
         "propBad"           : 0.003,
