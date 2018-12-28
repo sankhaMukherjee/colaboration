@@ -107,7 +107,7 @@ The algorithm roughly translates to the following:
 
 A trained model is placed in the location `results/solution/*`. An example of this trained model can be seen here:
 
-![solutionVideo](https://youtu.be/mpenl59XNiU)
+[![solutionVideo](https://raw.githubusercontent.com/sankhaMukherjee/colaboration/master/results/imgExample.png)](https://youtu.be/mpenl59XNiU)
 
 The training process is shown below.
 
@@ -124,7 +124,7 @@ More needs to be done to stabilize the system.
 ## 5. Future Work
 
 1. I shall try to play with the different parameters, and also run the model for much longer to see whether the model magically learns something, as in the case of the course instructors. 
-2. I shall also try to see whether it is possible to combine the last few views to generate something meaningful as input, rather than just using the latest observation. This means that the agent will have knowledge of not only the current observation, but also the last few observations. This should allow the agent to learn a much better. 
+2. I shall also try to see whether it is possible to combine the last few views to generate something meaningful as input, rather than just using the latest observation. This means that the agent will have knowledge of not only the current observation, but also the last few observations. This should allow the agent to learn a much better (as described [here](https://blog.openai.com/better-exploration-with-parameter-noise/)). 
 3. I also want to change the exploration by adding noise to the weights, rather than obtaining a random vector. There are some papers that look at adding Gaussing noise to the action, and others that add noise to the weights. Apparently adding noise to the weights are much better. We can explore those options.
 4. I have used `tanh` activation for avoiding the exploding gradients problem. I would like to try gradient clipping along with `ReLU` units.
 
