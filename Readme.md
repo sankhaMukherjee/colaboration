@@ -1,6 +1,6 @@
 # colaboration
 
-This project explores the possibility of using two Agents that use deep reinforcement learning to leanr to collaborate to play tennis. 
+This project explores the possibility of using two Agents that use deep reinforcement learning to learn to collaborate to play tennis. 
 
 ## 1. Prerequisites
 
@@ -13,7 +13,9 @@ Since this work was initially done on a Mac, the `./p3_collab-compet` folder con
  - [Win32](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Tennis/Tennis_Windows_x86.zip)
  - [Win64](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Tennis/Tennis_Windows_x86_64.zip)
 
-Install these in a convinient location within your folder structure, and use this file for the training etc. Modify the Unity environment to point to this file.
+Install these in a convinient location within your folder structure, and use this file for the training etc. Modify the Unity environment to point to this file. 
+
+You are highly encouraged to use a GPU for training. This installs both Tensorflow and PyTorch. This program assumes that you are able to use th GPU. 
 
 ## 2. Installing
 
@@ -103,26 +105,28 @@ The algorithm roughly translates to the following:
 
 ### 4.5. Examples of Learning
 
-It turns out that exploration is essential for learning. Without exploration, the learning algorithms have absolutely no bearing on learning as shown below. 
+A trained model is placed in the location `results/solution/*`. An example of this trained model can be seen here:
 
-![bad algorithm](https://raw.githubusercontent.com/sankhaMukherjee/colaboration/master/results/2018-12-09--18-50-45/scores.png)
+![solutionVideo](https://youtu.be/mpenl59XNiU)
 
-When the exploreation is turned off too fast, the learning decreases at a significant rate as shown below:
+The training process is shown below.
 
-![bad algo](https://raw.githubusercontent.com/sankhaMukherjee/colaboration/master/results/2018-12-09--21-08-29/scores.png)
+| ![scores](https://raw.githubusercontent.com/sankhaMukherjee/colaboration/master/results/2018-12-28--00-11-04/scoresAgent_1.png) | ![learning curve](https://raw.githubusercontent.com/sankhaMukherjee/colaboration/master/results/2018-12-28--00-11-04/losses.png) |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+|                             (a)                              |                             (b)                              |
 
-For higher exploration, the learning is slightly better. 
+Fig. 1. Results of a training run for 5000 iterations is shown. The scores are shown in (a) and the losses of both actors and critics are shown in (b).
 
-![better](https://github.com/sankhaMukherjee/colaboration/blob/master/results/2018-12-09--21-32-29/scores.png)
-
-However, unfortuantely, the result is not very good, and the system did not learn very well ...
+As can be seen, a fairly stable around the 1000 iteration point, after which it rapidlt deteriorates. It is interesting to see that the actor losses continue to decrease, while the critic losses increases slightly after the 1000 iteration mark, and then again slowly stats decreasing.
 
 More needs to be done to stabilize the system.
 
 ## 5. Future Work
 
 1. I shall try to play with the different parameters, and also run the model for much longer to see whether the model magically learns something, as in the case of the course instructors. 
-2. I shall also try to see whether it is possible to comvine the last few views to generate something meaningful as input, rather than just using the latest observation. This means that the agent will have knowledge of not only the current observation, but also the last few observations. This should allow the agent to learn a much better. 
+2. I shall also try to see whether it is possible to combine the last few views to generate something meaningful as input, rather than just using the latest observation. This means that the agent will have knowledge of not only the current observation, but also the last few observations. This should allow the agent to learn a much better. 
+3. I also want to change the exploration by adding noise to the weights, rather than obtaining a random vector. There are some papers that look at adding Gaussing noise to the action, and others that add noise to the weights. Apparently adding noise to the weights are much better. We can explore those options.
+4. I have used `tanh` activation for avoiding the exploding gradients problem. I would like to try gradient clipping along with `ReLU` units.
 
 ## 6. Authors
 
