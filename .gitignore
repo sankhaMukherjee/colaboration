@@ -19,3 +19,5 @@ p3_collab-compet/
 
 # Dont save the temporary files for now
 results/*-tmp
+results/tmp
+results/tmp_N
