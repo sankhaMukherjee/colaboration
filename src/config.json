@@ -1,7 +1,7 @@
 {
     "TODO" : {
-        "train"        : true, 
-        "test"         : false,
+        "train"        : false, 
+        "test"         : true,
         "trainMemory"  : false, 
         "someTest" : {
             "TODO"             : false,
@@ -13,7 +13,7 @@
             "testAgent"        : false
         }
 
-    }, 
+    },
 
     "UnityEnv" : {
         "file_name"      : "../p3_collab-compet/Tennis_Linux/Tennis.x86_64",
@@ -42,9 +42,9 @@
 
     "testing" : {
         "folders" : [
-            "../results/2018-12-13--18-57-38-afterBetterCumSum-tmp/[725]-[0.10000000149011612]"
+            "../results/solution"
         ],
-        "nTimes" : 20,
+        "nTimes" : 100,
         "map_location" : {"cuda:0" : "cpu"}
     },
 

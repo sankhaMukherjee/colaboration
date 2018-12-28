@@ -9,8 +9,8 @@ from torch.autograd import Variable
 
 from utils import utils, memory
 
+config = json.load(open('config.json'))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-# device = torch.device("cpu")
 
 class Actor(nn.Module):
     """Actor (Policy) Model."""

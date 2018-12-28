@@ -11,7 +11,6 @@ from tqdm  import tqdm
 
 config = json.load(open('config.json'))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-# device = torch.device("cpu")
 
 def saveResults(allScores, allScores_1, qLoss, aLoss, qLoss1, aLoss1):
 
